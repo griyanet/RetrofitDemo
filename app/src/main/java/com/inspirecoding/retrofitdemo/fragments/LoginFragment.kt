@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 
 import com.inspirecoding.retrofitdemo.R
 import com.inspirecoding.retrofitdemo.databinding.FragmentLoginBinding
@@ -29,5 +30,14 @@ class LoginFragment : Fragment()
     {
         binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_login, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.tvRegisterNow.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
     }
 }
