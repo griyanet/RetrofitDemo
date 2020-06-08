@@ -1,12 +1,18 @@
 package com.inspirecoding.retrofitdemo.repository
 
 import com.inspirecoding.retrofitdemo.model.User
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface JsonWordPressApi
 {
+    @GET("wp/v2/users")
+    suspend fun getUser(
+        @Query("search") email: String
+    ): List<User>
+
+    @GET("wp/v2/users")
+    suspend fun getAllUser(): List<User>
+
     @FormUrlEncoded
     @POST("wp/v2/users")
     suspend fun registerUser(

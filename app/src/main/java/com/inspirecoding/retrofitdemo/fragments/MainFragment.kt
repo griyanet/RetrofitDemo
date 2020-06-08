@@ -9,15 +9,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-
+import androidx.lifecycle.observe
 import com.inspirecoding.retrofitdemo.R
 import com.inspirecoding.retrofitdemo.adapter.UserAdapter
 import com.inspirecoding.retrofitdemo.databinding.FragmentMainBinding
+import com.inspirecoding.retrofitdemo.utils.Status
+import com.inspirecoding.retrofitdemo.viewmodel.RepositoryViewModel
 
 class MainFragment : Fragment()
 {
     private lateinit var binding: FragmentMainBinding
     private lateinit var userAdapter: UserAdapter
+    private val repositoryViewModel by navGraphViewModels<RepositoryViewModel>(R.id.navigation_graph)
 
 
     override fun onStart()
@@ -51,6 +54,27 @@ class MainFragment : Fragment()
         setHasOptionsMenu(true)
 
         initRecyclerView()
+
+        repositoryViewModel.getAllUsers().observe(viewLifecycleOwner) {_resource ->
+            when (_resource.status)
+            {
+                Status.SUCCESS -> {
+                    setProgressBarVisibility(View.GONE)
+                    val listOfUser = _resource.data
+                    listOfUser?.let { _listOfUser ->
+                        userAdapter.addAllUser(_listOfUser)
+                    }
+                    findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                }
+                Status.ERROR -> {
+                    setProgressBarVisibility(View.GONE)
+                    repositoryViewModel.sendToastMessage(_resource.message)
+                }
+                Status.LOADING -> {
+                    setProgressBarVisibility(View.VISIBLE)
+                }
+            }
+        }
     }
 
     private fun setProgressBarVisibility(visible: Int)
